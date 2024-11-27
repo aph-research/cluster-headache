@@ -74,15 +74,15 @@ def create_intensity_scale_inputs(config):
 
     return config
 
-def create_migraine_inputs(config):
-    with st.sidebar.expander("Migraine Parameters"):
-        migraine_mean = st.number_input("Mean pain intensity", min_value=1.0, max_value=9.0, value=config.migraine_mean, step=0.1)
-        migraine_median = st.number_input("Median pain intensity", min_value=1.0, max_value=9.0, value=config.migraine_median, step=0.1)
-        migraine_std = st.number_input("Standard deviation", min_value=0.1, max_value=4.0, value=config.migraine_std, step=0.1)
+def create_ms_inputs(config):
+    with st.sidebar.expander("MS Parameters"):
+        ms_mean = st.number_input("Mean pain intensity", min_value=1.0, max_value=9.0, value=config.ms_mean, step=0.1)
+        ms_median = st.number_input("Median pain intensity", min_value=1.0, max_value=9.0, value=config.ms_median, step=0.1)
+        ms_std = st.number_input("Standard deviation", min_value=0.1, max_value=4.0, value=config.ms_std, step=0.1)
 
-    config.migraine_mean = migraine_mean
-    config.migraine_median = migraine_median
-    config.migraine_std = migraine_std
+    config.ms_mean = ms_mean
+    config.ms_median = ms_median
+    config.ms_std = ms_std
 
     return config
 
@@ -113,7 +113,7 @@ def main():
 
     # Intensity Scale Transformation inputs
     config = create_intensity_scale_inputs(config)
-    config = create_migraine_inputs(config)
+    config = create_ms_inputs(config)
 
     if run_simulation:
         with st.spinner("Running simulation..."):
@@ -155,9 +155,9 @@ def main():
                                                 config.power,
                                                 config.base,
                                                 config.scaling_factor,
-                                                config.migraine_mean, 
-                                                config.migraine_median,
-                                                config.migraine_std)
+                                                config.ms_mean, 
+                                                config.ms_median,
+                                                config.ms_std)
         
         fig_adjusted = visualizer.create_adjusted_pain_units_plot()
         st.plotly_chart(fig_adjusted)
@@ -166,30 +166,18 @@ def main():
         df = visualizer.create_summary_table()
         visualizer.display_summary_table(df)
 
-        fig_migraine = visualizer.plot_ch_vs_migraine_person_years()
-        st.plotly_chart(fig_migraine)
-        fig_exports_all['fig_migraine'] = fig_migraine
+        fig_ms = visualizer.plot_ch_vs_ms_person_years()
+        st.plotly_chart(fig_ms)
+        fig_exports_all['fig_ms'] = fig_ms
 
-        fig_migraine_comparison = visualizer.create_adjusted_pain_units_plot_comparison_migraine()
-        st.plotly_chart(fig_migraine_comparison, use_container_width=True)
-        fig_exports_all['fig_migraine_comparison'] = fig_migraine_comparison
+        fig_ms_comparison = visualizer.create_adjusted_pain_units_plot_comparison_ms()
+        st.plotly_chart(fig_ms_comparison, use_container_width=True)
+        fig_exports_all['fig_ms_comparison'] = fig_ms_comparison
         
-        fig_migraine_comparison_3d, fig_intensities = visualizer.create_adjusted_pain_units_plot_comparison_migraine_3d()
-        st.plotly_chart(fig_migraine_comparison_3d, use_container_width=True)
+        fig_ms_comparison_3d, fig_intensities = visualizer.create_adjusted_pain_units_plot_comparison_ms_3d()
+        st.plotly_chart(fig_ms_comparison_3d, use_container_width=True)
         if fig_intensities.data:
             st.plotly_chart(fig_intensities)
-
-        pain_threshold = 7.0
-        fig_migraine_comparison_threshold = visualizer.create_adjusted_pain_units_plot_comparison_migraine(pain_threshold)
-        st.plotly_chart(fig_migraine_comparison_threshold, use_container_width=True)
-        fig_exports_all['fig_migraine_comparison_threshold'] = fig_migraine_comparison_threshold
-
-        fig_migraine_comparison_3d_threshold, fig_intensities_threshold = visualizer.create_adjusted_pain_units_plot_comparison_migraine_3d(pain_threshold)
-        st.plotly_chart(fig_migraine_comparison_3d_threshold, use_container_width=True)
-        fig_exports_all['fig_migraine_comparison_3d_threshold'] = fig_migraine_comparison_3d_threshold
-        if fig_intensities_threshold.data:
-            st.plotly_chart(fig_intensities_threshold)
-            fig_exports_all['fig_intensities_threshold'] = fig_intensities_threshold
         
         fig_heatmap = visualizer.create_burden_ratio_heatmap()
         st.plotly_chart(fig_heatmap)

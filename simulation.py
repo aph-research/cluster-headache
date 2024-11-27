@@ -1,7 +1,7 @@
 import numpy as np
 from collections import defaultdict
 from models import Patient
-from stats_utils import calculate_adjusted_pain_units, calculate_migraine_distribution
+from stats_utils import calculate_adjusted_pain_units, calculate_ms_distribution
 
 class Simulation:
     def __init__(self, config):
@@ -18,10 +18,10 @@ class Simulation:
         self.global_average_intensity = {}
         self.adjusted_pain_units = {}
         self.adjusted_avg_pain_units = {}
-        self.adjusted_pain_units_migraine = np.array([])
+        self.adjusted_pain_units_ms = np.array([])
         self.group_data = []
         self.total_ch_sufferers = None
-        self.migraine_data = []
+        self.ms_data = []
 
     def run(self):
         self.calculate_ch_groups()
@@ -139,8 +139,8 @@ class Simulation:
                 self.config.scaling_factor,
                 self.config.n_taylor
             )
-        self.adjusted_pain_units_migraine, self.intensities_transformed = calculate_adjusted_pain_units(
-            self.migraine_data['y'],
+        self.adjusted_pain_units_ms, self.intensities_transformed = calculate_adjusted_pain_units(
+            self.ms_data['y'],
             self.intensities,
             self.config.transformation_method,
             self.config.power,
@@ -150,28 +150,28 @@ class Simulation:
             self.config.n_taylor
         )
 
-    def calculate_migraine_data(self):
-        self.migraine_data = defaultdict(list)
-        self.migraine_data['x'], self.migraine_data['y'] = calculate_migraine_distribution(
-            self.config.migraine_mean,
-            self.config.migraine_median,
-            self.config.migraine_std
+    def calculate_ms_data(self):
+        self.ms_data = defaultdict(list)
+        self.ms_data['x'], self.ms_data['y'] = calculate_ms_distribution(
+            self.config.ms_mean,
+            self.config.ms_median,
+            self.config.ms_std
         )
         adjusted_global_population = 1_158_000_000 / 0.144
-        total_migraine_sufferers = adjusted_global_population * self.config.migraine_prevalence_percentage
+        total_ms_sufferers = adjusted_global_population * self.config.ms_prevalence_percentage
         # Need to multiply by 0.1 since otherwise I get the distribution only, but the time is the integral, with bin width 0.1
-        self.migraine_data['y'] = self.migraine_data['y'] * total_migraine_sufferers * self.config.migraine_fraction_of_year_in_attacks * 0.1
+        self.ms_data['y'] = self.ms_data['y'] * total_ms_sufferers * self.config.ms_fraction_of_year_in_attacks * 0.1
 
-    def update_transformation_params(self, transformation_method, transformation_display, power, base, scaling_factor, migraine_mean, migraine_median, migraine_std):
+    def update_transformation_params(self, transformation_method, transformation_display, power, base, scaling_factor, ms_mean, ms_median, ms_std):
         self.config.transformation_method = transformation_method
         self.config.transformation_display = transformation_display
         self.config.power = power
         self.config.base = base
         self.config.scaling_factor = scaling_factor
-        self.config.migraine_mean = migraine_mean
-        self.config.migraine_median = migraine_median
-        self.config.migraine_std = migraine_std
-        self.calculate_migraine_data()
+        self.config.ms_mean = ms_mean
+        self.config.ms_median = ms_median
+        self.config.ms_std = ms_std
+        self.calculate_ms_data()
         self.calculate_adjusted_pain_units()
 
     def get_results(self):
@@ -188,5 +188,5 @@ class Simulation:
             'ch_groups': self.ch_groups,
             'adjusted_pain_units': self.adjusted_pain_units,
             'adjusted_avg_pain_units': self.adjusted_avg_pain_units,
-            'migraine_data': self.migraine_data
+            'ms_data': self.ms_data
         }

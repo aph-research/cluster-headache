@@ -14,20 +14,20 @@ class Visualizer:
         self.global_person_years = self.results['global_person_years']
         self.global_std_person_years = self.results['global_std_person_years']
         self.ch_groups = self.results['ch_groups']
-        self.migraine_data = self.results['migraine_data']
+        self.ms_data = self.results['ms_data']
         self.color_map = {
             'Episodic Treated': px.colors.qualitative.Plotly[0],
             'Episodic Untreated': px.colors.qualitative.Plotly[1],
             'Chronic Treated': px.colors.qualitative.Plotly[2],
             'Chronic Untreated': px.colors.qualitative.Plotly[3],
-            'Migraine': px.colors.qualitative.Plotly[5]
+            'MS': px.colors.qualitative.Plotly[5]
         }
         self.marker_map = {
             'Episodic Treated': 'cross',
             'Episodic Untreated': 'diamond',
             'Chronic Treated': 'square',
             'Chronic Untreated': 'circle',
-            'Migraine': 'triangle-up'
+            'MS': 'triangle-up'
         }
         self.template = 'plotly_dark' if simulation.config.theme == 'dark' else 'plotly_white'
         self.text_color ='white' if simulation.config.theme == 'dark' else 'black'
@@ -217,15 +217,15 @@ class Visualizer:
 
         return fig_adjusted
 
-    def create_adjusted_pain_units_plot_comparison_migraine(self, pain_threshold=0):
+    def create_adjusted_pain_units_plot_comparison_ms(self, pain_threshold=0):
         idx = int(pain_threshold * 10)
 
         if pain_threshold > 0:
-            title = f"Annual Intensity-Adjusted Person-Years of ≥{int(pain_threshold)}/10 Pain: Migraine vs Cluster Headache <br>({self.simulation.config.transformation_display} Transformation)"
+            title = f"Annual Intensity-Adjusted Person-Years of ≥{int(pain_threshold)}/10 Pain: Multiple Sclerosis vs Cluster Headache <br>({self.simulation.config.transformation_display} Transformation)"
             size = [8 for _ in self.intensities]
             xaxis_ticks=dict(tickmode='array', dtick=0.1, range=[pain_threshold-0.1, 10.1], tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color))
         else:
-            title = f"Annual Intensity-Adjusted Person-Years of Pain: Migraine vs Cluster Headache <br>({self.simulation.config.transformation_display} Transformation)"
+            title = f"Annual Intensity-Adjusted Person-Years of Pain: Multiple Sclerosis vs Cluster Headache <br>({self.simulation.config.transformation_display} Transformation)"
             size = [8 if x.is_integer() else 0 for x in self.intensities]
             xaxis_ticks=dict(tickmode='linear', tick0=0, dtick=1, tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color))
 
@@ -250,14 +250,14 @@ class Visualizer:
         
         fig.add_trace(go.Scatter(
             x=self.intensities[idx:],
-            y=self.simulation.adjusted_pain_units_migraine[idx:],
+            y=self.simulation.adjusted_pain_units_ms[idx:],
             mode='lines+markers',
-            name='Migraine',
-            line=dict(color=self.color_map['Migraine'], width=2),
+            name='Multiple Sclerosis',
+            line=dict(color=self.color_map['MS'], width=2),
             marker=dict(
-                    symbol=self.marker_map['Migraine'],
+                    symbol=self.marker_map['MS'],
                     size=size,
-                    color=self.color_map['Migraine'],
+                    color=self.color_map['MS'],
                 ),
             hoverinfo='x+y+name'
         ))
@@ -290,42 +290,15 @@ class Visualizer:
 
         return fig
     
-    def create_adjusted_pain_units_plot_comparison_migraine_3d(self, pain_threshold=0):
+    def create_adjusted_pain_units_plot_comparison_ms_3d(self, pain_threshold=0):
         idx = int(pain_threshold * 10)
 
         if pain_threshold > 0:
-            title_3d = f"Annual Intensity-Adjusted Person-Years of ≥{int(pain_threshold)}/10 Pain: Migraine vs Cluster Headache"
-            title_transformation = f"Intensity Transformation for which ≥{int(pain_threshold)}/10 CH Burden > Migraine Burden"
-            updatemenus = []            
+            title_3d = f"Annual Intensity-Adjusted Person-Years of ≥{int(pain_threshold)}/10 Pain: Multiple Sclerosis vs Cluster Headache"
+            title_transformation = f"Intensity Transformation for which ≥{int(pain_threshold)}/10 CH Burden > MS Burden"
         else:
-            title_3d = f"Annual Intensity-Adjusted Person-Years of Pain: Migraine vs Cluster Headache"
-            title_transformation = f"Intensity Transformation for which Total CH Burden > Migraine Burden"
-            updatemenus = [
-                dict(
-                    type="buttons",
-                    direction="right",
-                    buttons=list([
-                        dict(
-                            args=[{"scene.zaxis.range": [None, None]}],
-                            label="Full Range",
-                            method="relayout"
-                        ),
-                        dict(
-                            args=[{"scene.zaxis.range": [0, 30000]}],
-                            label="Truncate to 30,000",
-                            method="relayout"
-                        )
-                    ]),
-                    pad={"r": 10, "t": 10},
-                    showactive=True,
-                    x=0.0,
-                    xanchor="left",
-                    y=1.05,
-                    yanchor="top",
-                    bgcolor="#2c2c2c",  # Background color for all buttons
-                    font=dict(color="red"),  # Text color for all buttons
-                ),
-            ]
+            title_3d = f"Annual Intensity-Adjusted Person-Years of Pain: Multiple Sclerosis vs Cluster Headache"
+            title_transformation = f"Intensity Transformation for which Total CH Burden > MS Burden"
         
         fig = go.Figure()
         fig_intensities = go.Figure()
@@ -337,7 +310,7 @@ class Visualizer:
         # Prepare data for 3D plot
         intensities = self.intensities[idx:]
         intensities_transformed = self.intensities_transformed[idx:]
-        z_data_migraine = []
+        z_data_ms = []
         z_data_cluster = []
 
         # Store the current configuration
@@ -354,19 +327,19 @@ class Visualizer:
             # Recalculate adjusted pain units
             self.simulation.calculate_adjusted_pain_units()
             
-            adjusted_pain_units_migraine = self.simulation.adjusted_pain_units_migraine[idx:]
-            z_data_migraine.append(adjusted_pain_units_migraine)
-            total_migraine_burden = sum(adjusted_pain_units_migraine)
+            adjusted_pain_units_ms = self.simulation.adjusted_pain_units_ms[idx:]
+            z_data_ms.append(adjusted_pain_units_ms)
+            total_ms_burden = sum(adjusted_pain_units_ms)
             
             # Calculate the global adjusted pain units for cluster headaches
-            global_person_years_ch_all_adjusted = np.zeros_like(adjusted_pain_units_migraine)
+            global_person_years_ch_all_adjusted = np.zeros_like(adjusted_pain_units_ms)
             for group in self.simulation.ch_groups.keys():
                 global_person_years_ch_all_adjusted += self.simulation.adjusted_pain_units[group][idx:]
             
             z_data_cluster.append(global_person_years_ch_all_adjusted)
             total_cluster_burden = sum(global_person_years_ch_all_adjusted)
 
-            if total_cluster_burden > total_migraine_burden and n_taylor_crossing == 0:
+            if total_cluster_burden > total_ms_burden and n_taylor_crossing == 0:
                 n_taylor_crossing = n_taylor
                 intensities_transformed = self.simulation.intensities_transformed[idx:]
 
@@ -379,16 +352,16 @@ class Visualizer:
         self.simulation.calculate_adjusted_pain_units()
 
         # Convert z_data to a 2D arrays
-        z_data_migraine = np.array(z_data_migraine)
+        z_data_ms = np.array(z_data_ms)
         z_data_cluster = np.array(z_data_cluster)
     
-        # Create the 3D surface plot for migraine
+        # Create the 3D surface plot for ms
         fig.add_trace(go.Surface(
             x=intensities,
             y=np.array(n_taylor_values)-2,
-            z=z_data_migraine,
+            z=z_data_ms,
             colorscale='Blues_r',
-            name='Migraine',
+            name='MS',
             opacity=0.99,
             showscale=False,
             hovertemplate='Intensity: %{x}<br>Adj. Person-Years: %{z:,.0f}'
@@ -410,7 +383,7 @@ class Visualizer:
         # (subtracting 2 since n_taylor starts at 2, which corresponds to y = 0)
         if n_taylor_crossing != 0:
             plane_y = np.full((len(intensities), len(z_data_cluster[0])), n_taylor_crossing-2)
-            max_z_value = np.max([np.max(z_data_cluster), np.max(z_data_migraine)])
+            max_z_value = np.max([np.max(z_data_cluster), np.max(z_data_ms)])
             plane_z = np.linspace(0, max_z_value, len(z_data_cluster[0]))
             plane_z = np.tile(plane_z, (len(intensities), 1))
 
@@ -421,7 +394,7 @@ class Visualizer:
                 colorscale=[[0, 'rgba(255, 0, 0, 0.5)'], [1, 'rgba(255, 0, 0, 0.5)']],
                 name='Crossing Plane',
                 showscale=False,
-                hovertemplate='Point where CH burden > migraine burden<extra></extra>'
+                hovertemplate='Point where CH burden > MS burden<extra></extra>'
             ))
             
             fig_intensities.add_trace(go.Scatter(
@@ -455,7 +428,6 @@ class Visualizer:
 
         fig.update_layout(
             title=title_3d,
-            updatemenus=updatemenus,
             scene=dict(
                 xaxis=dict(
                     title='Pain Intensity',
@@ -467,7 +439,8 @@ class Visualizer:
                     title='',
                     tickvals=[n_taylor_values[0]-2, n_taylor_values[-1]-2],
                     ticktext=['More linear', 'More exponential'],
-                    tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color)
+                    tickfont=dict(color=self.text_color), 
+                    title_font=dict(color=self.text_color)
                 ),
                 zaxis=dict(
                     title='Adjusted Person-Years',
@@ -484,7 +457,7 @@ class Visualizer:
             },
             template=self.template,
             height=500,
-            margin=dict(l=0, r=0, t=50, b=30)  # Increased top margin to accommodate the button
+            margin=dict(l=0, r=0, t=50, b=30)
         )
 
         return fig, fig_intensities
@@ -729,12 +702,11 @@ class Visualizer:
         )
         return fig
     
-    def plot_ch_vs_migraine_person_years(self):
+    def plot_ch_vs_ms_person_years(self):
         fig = go.Figure()
 
         global_person_years_ch_all = sum(self.global_person_years[group] for group in self.global_person_years.keys())
 
-        # Plot the global_person_years_ch_all as another line with markers
         fig.add_trace(go.Scatter(
             x=self.intensities,
             y=global_person_years_ch_all,
@@ -742,48 +714,38 @@ class Visualizer:
             name='Cluster Headache',
             line=dict(color=self.color_map['Episodic Untreated'], width=2),
             marker=dict(
-                    symbol=self.marker_map['Episodic Untreated'],
-                    size=[8 if x.is_integer() else 0 for x in self.simulation.migraine_data['x']],
-                    color=self.color_map['Episodic Untreated'],
-                ),
-            hoverinfo='x+y+name',
-            yaxis='y2'  # Assign to secondary y-axis
+                symbol=self.marker_map['Episodic Untreated'],
+                size=[8 if x.is_integer() else 0 for x in self.simulation.ms_data['x']],
+                color=self.color_map['Episodic Untreated'],
+            ),
+            hoverinfo='x+y+name'
         ))
 
-        # Plot the migraine data as a line with markers
         fig.add_trace(go.Scatter(
             x=self.intensities,
-            y=self.simulation.migraine_data['y'],
+            y=self.simulation.ms_data['y'],
             mode='lines+markers',
-            name='Migraine',
-            line=dict(color=self.color_map['Migraine'], width=2),
+            name='Multiple Sclerosis',
+            line=dict(color=self.color_map['MS'], width=2),
             marker=dict(
-                    symbol=self.marker_map['Migraine'],
-                    size=[8 if x.is_integer() else 0 for x in self.simulation.migraine_data['x']],
-                    color=self.color_map['Migraine'],
-                ),
+                symbol=self.marker_map['MS'],
+                size=[8 if x.is_integer() else 0 for x in self.simulation.ms_data['x']],
+                color=self.color_map['MS'],
+            ),
             hoverinfo='x+y+name'
         ))
         
         fig.update_layout(
-            title="Global Annual Person-Years of Pain: Migraine vs Cluster Headache",
+            title="Global Annual Person-Years of Pain: Multiple Sclerosis vs Cluster Headache",
             xaxis_title='Pain Intensity',
             xaxis=dict(tickmode='linear', tick0=0, dtick=1, tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color)),
             yaxis=dict(
-                title='Annual Person-Years: Migraine',
-                titlefont=dict(color=self.color_map['Migraine']),
-                tickfont=dict(color=self.color_map['Migraine']),
+                title='Annual Person-Years',
+                tickfont=dict(color=self.text_color),
+                title_font=dict(color=self.text_color),
                 tickformat=',.0f'
             ),
-            yaxis2=dict(
-                title='Annual Person-Years: Cluster Headache',
-                titlefont=dict(color=self.color_map['Episodic Untreated']),
-                tickfont=dict(color=self.color_map['Episodic Untreated']),
-                tickformat=',.0f',
-                overlaying='y',
-                side='right'
-            ),
-            legend_title_text='',
+            template=self.template,
             legend=dict(
                 itemsizing='constant',
                 itemwidth=30,
@@ -791,11 +753,9 @@ class Visualizer:
                 y=0.99,
                 xanchor="left",
                 x=0.01,
-                #bgcolor="rgba(0,0,0,0.5)",
                 bordercolor="grey",
                 borderwidth=1
-            ),
-            template=self.template
+            )
         )
 
         return fig
@@ -822,10 +782,10 @@ class Visualizer:
                 self.simulation.calculate_adjusted_pain_units()
                 
                 ch_burden = sum(sum(group[idx:]) for group in self.simulation.adjusted_pain_units.values())
-                migraine_burden = sum(self.simulation.adjusted_pain_units_migraine[idx:])
+                ms_burden = sum(self.simulation.adjusted_pain_units_ms[idx:])
                 
-                if migraine_burden > 0:
-                    ratio = ch_burden / migraine_burden
+                if ms_burden > 0:
+                    ratio = ch_burden / ms_burden
                     original_ratios[i, j] = ratio
                     ratio_matrix[i, j] = np.log10(ratio) if ratio > 0 else np.nan
                 else:
@@ -844,7 +804,7 @@ class Visualizer:
             zmax=max_abs_val,
             colorbar=dict(
                 title=dict(
-                    text='log₁₀(CH:Migraine Burden Ratio)',
+                    text='log₁₀(CH:MS Burden Ratio)',
                     font=dict(color=self.text_color)
                 ),
                 ticktext=[f'1/{10**i}' for i in range(int(max_abs_val), 0, -1)] +
@@ -857,7 +817,7 @@ class Visualizer:
             ),
             hovertemplate='Taylor Terms: %{x}<br>' +
                         'Pain Threshold: %{y:.1f}<br>' +
-                        'CH:Migraine Ratio: %{customdata:.3f}<extra></extra>',
+                        'CH:MS Ratio: %{customdata:.3f}<extra></extra>',
             customdata=original_ratios
         ))
         
@@ -878,7 +838,7 @@ class Visualizer:
         ))
         
         fig.update_layout(
-            title='CH:Migraine Burden Ratio by Transformation Intensity Transformation and Pain Threshold',
+            title='CH:MS Burden Ratio by Transformation Intensity Transformation and Pain Threshold',
             xaxis=dict(
                 title='Intensity Scale Transformation',
                 ticktext=['More linear', 'More exponential'],

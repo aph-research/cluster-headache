@@ -317,16 +317,16 @@ def calculate_adjusted_pain_units(time_amounts, intensities, transformation_meth
                                                   n_taylor=n_taylor)
     return np.array([y * t for y, t in zip(time_amounts, transformed_intensities)]), transformed_intensities
 
-def calculate_migraine_distribution(migraine_mean, migraine_median, migraine_std):
+def calculate_ms_distribution(ms_mean, ms_median, ms_std):
     # Estimate skewness parameter
-    a = -4 * (migraine_mean - migraine_median) / migraine_std
+    a = -4 * (ms_mean - ms_median) / ms_std
     
     # Define the truncation points
     lower_bound, upper_bound = 0, 10
 
     # Calculate the CDF at the truncation points
-    cdf_lower = skewnorm.cdf(lower_bound, a, loc=migraine_mean, scale=migraine_std)
-    cdf_upper = skewnorm.cdf(upper_bound, a, loc=migraine_mean, scale=migraine_std)
+    cdf_lower = skewnorm.cdf(lower_bound, a, loc=ms_mean, scale=ms_std)
+    cdf_upper = skewnorm.cdf(upper_bound, a, loc=ms_mean, scale=ms_std)
 
     # Compute the normalization factor
     normalization_factor = cdf_upper - cdf_lower
@@ -335,7 +335,7 @@ def calculate_migraine_distribution(migraine_mean, migraine_median, migraine_std
     bin_edges = np.linspace(0, 10, 101)  # 101 bins between 0 and 10
 
     # Calculate the PDF values
-    pdf_values = skewnorm.pdf(bin_edges, a, loc=migraine_mean, scale=migraine_std)
+    pdf_values = skewnorm.pdf(bin_edges, a, loc=ms_mean, scale=ms_std)
 
     # Normalize the PDF values
     normalized_pdf_values = pdf_values / normalization_factor
