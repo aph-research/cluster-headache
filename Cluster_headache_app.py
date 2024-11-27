@@ -76,10 +76,14 @@ def create_intensity_scale_inputs(config):
 
 def create_ms_inputs(config):
     with st.sidebar.expander("MS Parameters"):
+        ms_prevalence = st.slider("Annual prevalence (adults per 100,000)", 20, 50, config.ms_prevalence_per_100k, 1)
+        ms_year_fraction = st.slider("Percentage of year in pain", 0, 100, int(config.ms_fraction_of_year_in_pain * 100), format="%d%%") / 100
         ms_mean = st.number_input("Mean pain intensity", min_value=1.0, max_value=9.0, value=config.ms_mean, step=0.1)
         ms_median = st.number_input("Median pain intensity", min_value=1.0, max_value=9.0, value=config.ms_median, step=0.1)
         ms_std = st.number_input("Standard deviation", min_value=0.1, max_value=4.0, value=config.ms_std, step=0.1)
 
+    config.ms_prevalence_per_100k = int(ms_prevalence)
+    config.ms_fraction_of_year_in_pain = ms_year_fraction
     config.ms_mean = ms_mean
     config.ms_median = ms_median
     config.ms_std = ms_std
@@ -157,7 +161,9 @@ def main():
                                                 config.scaling_factor,
                                                 config.ms_mean, 
                                                 config.ms_median,
-                                                config.ms_std)
+                                                config.ms_std,
+                                                config.ms_prevalence_per_100k,
+                                                config.ms_fraction_of_year_in_pain)
         
         fig_adjusted = visualizer.create_adjusted_pain_units_plot()
         st.plotly_chart(fig_adjusted)

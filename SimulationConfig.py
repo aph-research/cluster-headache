@@ -17,9 +17,9 @@ class SimulationConfig:
     base: float = np.e
     n_taylor: int = 2
     scaling_factor: float = 1.0
-    ms_mean: float = 3.0
-    ms_median: float = 4.2
-    ms_std: float = 1.2
-    ms_prevalence_percentage: float = 0.00144
-    ms_fraction_of_year_in_attacks: float = .0085
+    ms_mean: float = 2.5
+    ms_median: float = 3.0
+    ms_std: float = 1.3
+    ms_prevalence_per_100k: int = 35
+    ms_fraction_of_year_in_pain: float = .25
     theme: str = 'dark'

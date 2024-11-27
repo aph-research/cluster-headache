@@ -157,12 +157,11 @@ class Simulation:
             self.config.ms_median,
             self.config.ms_std
         )
-        adjusted_global_population = 1_158_000_000 / 0.144
-        total_ms_sufferers = adjusted_global_population * self.config.ms_prevalence_percentage
+        total_ms_sufferers = self.config.world_adult_population * (self.config.ms_prevalence_per_100k / 100_000)
         # Need to multiply by 0.1 since otherwise I get the distribution only, but the time is the integral, with bin width 0.1
-        self.ms_data['y'] = self.ms_data['y'] * total_ms_sufferers * self.config.ms_fraction_of_year_in_attacks * 0.1
+        self.ms_data['y'] = self.ms_data['y'] * total_ms_sufferers * self.config.ms_fraction_of_year_in_pain * 0.1
 
-    def update_transformation_params(self, transformation_method, transformation_display, power, base, scaling_factor, ms_mean, ms_median, ms_std):
+    def update_transformation_params(self, transformation_method, transformation_display, power, base, scaling_factor, ms_mean, ms_median, ms_std, ms_prevalence_per_100k, ms_fraction_of_year_in_pain):
         self.config.transformation_method = transformation_method
         self.config.transformation_display = transformation_display
         self.config.power = power
@@ -171,6 +170,8 @@ class Simulation:
         self.config.ms_mean = ms_mean
         self.config.ms_median = ms_median
         self.config.ms_std = ms_std
+        self.config.ms_prevalence_per_100k = ms_prevalence_per_100k
+        self.config.ms_fraction_of_year_in_pain = ms_fraction_of_year_in_pain
         self.calculate_ms_data()
         self.calculate_adjusted_pain_units()
 
