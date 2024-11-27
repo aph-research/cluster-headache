@@ -159,7 +159,8 @@ class Simulation:
         )
         total_ms_sufferers = self.config.world_adult_population * (self.config.ms_prevalence_per_100k / 100_000)
         # Need to multiply by 0.1 since otherwise I get the distribution only, but the time is the integral, with bin width 0.1
-        self.ms_data['y'] = self.ms_data['y'] * total_ms_sufferers * self.config.ms_fraction_of_year_in_pain * 0.1
+        # Also need to multiply by the hours spent awake (16/24), since 100% of time in pain should be of time awake
+        self.ms_data['y'] = self.ms_data['y'] * total_ms_sufferers * self.config.ms_fraction_of_year_in_pain * (16/24) * 0.1
 
     def update_transformation_params(self, transformation_method, transformation_display, power, base, scaling_factor, ms_mean, ms_median, ms_std, ms_prevalence_per_100k, ms_fraction_of_year_in_pain):
         self.config.transformation_method = transformation_method
