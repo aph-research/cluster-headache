@@ -185,9 +185,6 @@ def main():
         if fig_intensities.data:
             st.plotly_chart(fig_intensities)
         
-        fig_heatmap = visualizer.create_burden_ratio_heatmap()
-        st.plotly_chart(fig_heatmap)
-        
     else:
         st.info('Please select your simulation parameters in the left pane (or leave the default ones) and then press "Run Simulation".')
 
