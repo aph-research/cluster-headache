@@ -31,6 +31,7 @@ class Visualizer:
         }
         self.template = 'plotly_dark' if simulation.config.theme == 'dark' else 'plotly_white'
         self.text_color ='white' if simulation.config.theme == 'dark' else 'black'
+        self.zerolinecolor = 'white' if simulation.config.theme == 'dark' else 'black'
 
     def create_plot(self, data, title, y_title):
         fig = go.Figure()
@@ -424,7 +425,7 @@ class Visualizer:
                     gridcolor='lightgray',
                     zeroline=True,
                     zerolinewidth=2,
-                    zerolinecolor='black'
+                    zerolinecolor=self.zerolinecolor
                     ),
                 yaxis=dict(
                     tickmode='array',
@@ -437,7 +438,7 @@ class Visualizer:
                     gridcolor='lightgray',
                     zeroline=True,
                     zerolinewidth=2,
-                    zerolinecolor='black'
+                    zerolinecolor=self.zerolinecolor
                     ),
                 # Make the plot square
                 height=550,
