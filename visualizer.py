@@ -418,9 +418,27 @@ class Visualizer:
                     tickvals=[int(i) for i in intensities],
                     ticktext=[str(int(i)) for i in intensities],
                     tickfont=dict(color=self.text_color), 
-                    title_font=dict(color=self.text_color)
-                ),
-                yaxis=dict(tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color)),
+                    title_font=dict(color=self.text_color),
+                    showgrid=True,
+                    gridwidth=1,
+                    gridcolor='lightgray',
+                    zeroline=True,
+                    zerolinewidth=2,
+                    zerolinecolor='black'
+                    ),
+                yaxis=dict(
+                    tickmode='array',
+                    tickvals=[i/10 for i in range(11)],
+                    ticktext=[f'{i/10:.1f}' for i in range(11)],
+                    tickfont=dict(color=self.text_color), 
+                    title_font=dict(color=self.text_color),
+                    showgrid=True,
+                    gridwidth=1,
+                    gridcolor='lightgray',
+                    zeroline=True,
+                    zerolinewidth=2,
+                    zerolinecolor='black'
+                    ),
                 # Make the plot square
                 height=550,
                 width=550,
