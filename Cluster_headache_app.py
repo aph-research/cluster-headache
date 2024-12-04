@@ -184,7 +184,8 @@ def main():
         st.plotly_chart(fig_ms_comparison_3d, use_container_width=True)
         if fig_intensities.data:
             st.plotly_chart(fig_intensities)
-        
+            fig_exports_all['fig_ms_transformation'] = fig_intensities
+                
     else:
         st.info('Please select your simulation parameters in the left pane (or leave the default ones) and then press "Run Simulation".')
 
