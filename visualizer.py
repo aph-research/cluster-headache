@@ -158,7 +158,7 @@ class Visualizer:
         return self.create_bar_plot(groups,
                                     high_intensity_values,
                                     high_intensity_error,
-                                    'Estimated Person-Years Spent in Cluster Headaches Annually by Group (Intensity ≥9/10)',
+                                    'Estimated Person-Years Spent in Cluster Headaches Annually by Group (Intensity ≥9/10) (±1σ)',
                                     'Person-Years (Intensity ≥9/10)')
 
     def create_comparison_plot(self):
