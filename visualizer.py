@@ -147,7 +147,7 @@ class Visualizer:
         return self.create_bar_plot(groups,
                                     total_values,
                                     total_error,
-                                    'Total Estimated Person-Years Spent in Cluster Headaches Annually by Group',
+                                    'Total Estimated Person-Years Spent in Cluster Headaches Annually by Group (±1σ)',
                                     'Total Person-Years')
 
     def create_high_intensity_person_years_plot(self):
@@ -188,7 +188,7 @@ class Visualizer:
         ])
 
         fig.update_layout(
-            title='Comparison of Total, ≥7/10, and ≥9/10 Intensity Person-Years Across All Groups',
+            title='Comparison of Total, ≥7/10, and ≥9/10 Intensity Person-Years Across All Groups (±1σ)',
             yaxis_title='Person-Years',
             template=self.template,
             xaxis=dict(tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color)),
