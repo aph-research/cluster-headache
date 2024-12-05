@@ -80,7 +80,7 @@ class Visualizer:
 
         fig.update_layout(
             title=title,
-            xaxis_title='Pain Intensity',
+            xaxis_title='Pain intensity',
             yaxis_title=y_title,
             xaxis=dict(tickmode='linear', tick0=0, dtick=1, tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color)),
             yaxis=dict(tickformat=',.0f', tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color)),
@@ -104,15 +104,15 @@ class Visualizer:
     def create_average_hours_plot(self):
         avg_data = [(name, np.array(avg)/60, np.array(std)/60) for name, avg, std, _, _ in self.group_data]
         return self.create_plot(avg_data, 
-                                'Average Hours per Year Spent at Different Pain Intensities (±1σ)',
-                                'Average Hours per Year')
+                                'Average hours per year spent at different pain intensities (±1σ)',
+                                'Average hours per year')
 
     def create_global_person_years_plot(self):
         global_data = [(name, self.global_person_years[name], self.global_std_person_years[name]) 
                        for name in self.ch_groups.keys()]
         return self.create_plot(global_data,
-                                'Global Annual Person-Years Spent in Cluster Headaches by Intensity (±1σ)',
-                                'Global Person-Years per Year')
+                                'Global annual person-years spent in cluster headaches by intensity (±1σ)',
+                                'Global person-years per year')
 
     def create_bar_plot(self, groups, values, errors, title, y_title):
         fig = go.Figure(data=[
@@ -147,8 +147,8 @@ class Visualizer:
         return self.create_bar_plot(groups,
                                     total_values,
                                     total_error,
-                                    'Total Estimated Person-Years Spent in Cluster Headaches Annually by Group (±1σ)',
-                                    'Total Person-Years')
+                                    'Total estimated person-years spent in cluster headaches annually by group (±1σ)',
+                                    'Total person-years')
 
     def create_high_intensity_person_years_plot(self):
         groups = list(self.ch_groups.keys())
@@ -158,8 +158,8 @@ class Visualizer:
         return self.create_bar_plot(groups,
                                     high_intensity_values,
                                     high_intensity_error,
-                                    'Estimated Person-Years Spent in Cluster Headaches Annually by Group (Intensity ≥9/10) (±1σ)',
-                                    'Person-Years (Intensity ≥9/10)')
+                                    'Estimated person-years spent in cluster headaches annually by group (intensity ≥9/10) (±1σ)',
+                                    'Person-years (intensity ≥9/10)')
 
     def create_comparison_plot(self):
         total_all_groups = sum(sum(years) for years in self.global_person_years.values())
@@ -176,7 +176,7 @@ class Visualizer:
         
         fig = go.Figure(data=[
             go.Bar(
-                x=['Total Person-Years', 'Person-Years at ≥7/10 Intensity', 'Person-Years at ≥9/10 Intensity'],
+                x=['Total person-years', 'Person-years at ≥7/10 intensity', 'Person-years at ≥9/10 intensity'],
                 y=bar_values,
                 error_y=dict(type='data', array=bar_errors, visible=True),
                 marker=dict(
@@ -188,7 +188,7 @@ class Visualizer:
         ])
 
         fig.update_layout(
-            title='Comparison of Total, ≥7/10, and ≥9/10 Intensity Person-Years Across All Groups (±1σ)',
+            title='Comparison of total, ≥7/10, and ≥9/10 intensity person-years across all groups (±1σ)',
             yaxis_title='Person-Years',
             template=self.template,
             xaxis=dict(tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color)),
@@ -209,8 +209,8 @@ class Visualizer:
         fig_adjusted = go.Figure()
         fig_adjusted = self.create_plot(
             adjusted_data,
-            title=f"Annual Intensity-Adjusted Person-Years by Cluster Headache Group ({self.simulation.config.transformation_display} Transformation)",
-            y_title="Annual Intensity-Adjusted Person-Years"
+            title=f"Annual intensity-adjusted person-years by cluster headache group ({self.simulation.config.transformation_method} transformation)",
+            y_title="Annual intensity-adjusted person-years"
         )
 
         max_adjusted_value = max(max(values) for _, values, _ in adjusted_data)
@@ -222,11 +222,11 @@ class Visualizer:
         idx = int(pain_threshold * 10)
 
         if pain_threshold > 0:
-            title = f"Annual Intensity-Adjusted Person-Years of ≥{int(pain_threshold)}/10 Pain: Multiple Sclerosis vs Cluster Headache <br>({self.simulation.config.transformation_display} Transformation)"
+            title = f"Annual intensity-adjusted person-years of ≥{int(pain_threshold)}/10 pain: Multiple sclerosis vs cluster headache <br>({self.simulation.config.transformation_method} transformation)"
             size = [8 for _ in self.intensities]
             xaxis_ticks=dict(tickmode='array', dtick=0.1, range=[pain_threshold-0.1, 10.1], tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color))
         else:
-            title = f"Annual Intensity-Adjusted Person-Years of Pain: Multiple Sclerosis vs Cluster Headache <br>({self.simulation.config.transformation_display} Transformation)"
+            title = f"Annual intensity-adjusted person-years of pain: Multiple sclerosis vs cluster headache <br>({self.simulation.config.transformation_method} transformation)"
             size = [8 if x.is_integer() else 0 for x in self.intensities]
             xaxis_ticks=dict(tickmode='linear', tick0=0, dtick=1, tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color))
 
@@ -265,11 +265,11 @@ class Visualizer:
 
         fig.update_layout(
             title=title,
-            xaxis_title='Pain Intensity',
+            xaxis_title='Pain intensity',
             xaxis=xaxis_ticks,
             legend_title_text='',
             yaxis=dict(
-                title='Intensity-Adjusted Person-Years',
+                title='Intensity-adjusted person-years',
                 tickformat=',.0f',
                 tickfont=dict(color=self.text_color), 
                 title_font=dict(color=self.text_color)
@@ -295,11 +295,11 @@ class Visualizer:
         idx = int(pain_threshold * 10)
 
         if pain_threshold > 0:
-            title_3d = f"Annual Intensity-Adjusted Person-Years of ≥{int(pain_threshold)}/10 Pain: Multiple Sclerosis vs Cluster Headache"
-            title_transformation = f"Intensity Transformation for which ≥{int(pain_threshold)}/10 CH Burden > MS Burden"
+            title_3d = f"Annual intensity-adjusted person-years of ≥{int(pain_threshold)}/10 pain: Multiple sclerosis vs cluster jeadache"
+            title_transformation = f"Intensity transformation for which ≥{int(pain_threshold)}/10 CH burden > MS burden"
         else:
-            title_3d = f"Annual Intensity-Adjusted Person-Years of Pain: Multiple Sclerosis vs Cluster Headache"
-            title_transformation = f"Intensity Transformation for which Total CH Burden > MS Burden"
+            title_3d = f"Annual intensity-adjusted person-years of pain: Multiple sclerosis vs cluster headache"
+            title_transformation = f"Intensity transformation for which total CH burden > MS burden"
         
         fig = go.Figure()
         fig_intensities = go.Figure()
@@ -365,7 +365,7 @@ class Visualizer:
             name='MS',
             opacity=0.99,
             showscale=False,
-            hovertemplate='Intensity: %{x}<br>Adj. Person-Years: %{z:,.0f}'
+            hovertemplate='Intensity: %{x}<br>Adj. person-years: %{z:,.0f}'
         ))
         
         # Create the 3D surface plot for cluster headache
@@ -377,7 +377,7 @@ class Visualizer:
             name='CH',
             opacity=0.7,
             showscale=False,
-            hovertemplate='Intensity: %{x}<br>Adj. Person-Years: %{z:,.0f}'
+            hovertemplate='Intensity: %{x}<br>Adj. person-years: %{z:,.0f}'
         ))
 
         # Add the plane at n_taylor_crossing-2 if it is not zero
@@ -405,13 +405,13 @@ class Visualizer:
                 marker=dict(
                     size=[8 if x.is_integer() else 0 for x in intensities],
                 ),
-                name='Adjusted Intensities'
+                name='Adjusted intensities'
             ))
 
             # Update layout
             fig_intensities.update_layout(
                 title=title_transformation,
-                xaxis_title='Pain Intensity',
+                xaxis_title='Pain intensity',
                 yaxis_title='Weight',
                 template=self.template,
                 xaxis=dict(
@@ -449,7 +449,7 @@ class Visualizer:
             title=title_3d,
             scene=dict(
                 xaxis=dict(
-                    title='Pain Intensity',
+                    title='Pain intensity',
                     autorange='reversed',
                     tickfont=dict(color=self.text_color),
                     title_font=dict(color=self.text_color)
@@ -462,7 +462,7 @@ class Visualizer:
                     title_font=dict(color=self.text_color)
                 ),
                 zaxis=dict(
-                    title='Adjusted Person-Years',
+                    title='Adjusted person-years',
                     tickformat=',.0f',
                     tickfont=dict(color=self.text_color), 
                     title_font=dict(color=self.text_color),
@@ -488,8 +488,8 @@ class Visualizer:
         table_data = []
         total_row = {
             'Group': 'Total',
-            'Average Patient': {key: 0 for key in ['Hours', 'High-Intensity Hours', 'Adjusted Units', 'High-Intensity Adjusted Units']},
-            'Global Estimate': {key: 0 for key in ['Person-Years', 'High-Intensity Person-Years', 'Adjusted Units', 'High-Intensity Adjusted Units']}
+            'Average patient': {key: 0 for key in ['Hours', 'High-intensity hours', 'Adjusted units', 'High-intensity adjusted units']},
+            'Global estimate': {key: 0 for key in ['Person-years', 'High-intensity person-years', 'Adjusted units', 'High-intensity adjusted units']}
         }
 
         for group in self.results['ch_groups'].keys():
@@ -508,23 +508,23 @@ class Visualizer:
             
             row = {
                 'Group': group,
-                'Average Patient': {
+                'Average patient': {
                     'Hours': avg_hours,
-                    'High-Intensity Hours': avg_high_hours,
-                    'Adjusted Units': avg_adjusted_units,
-                    'High-Intensity Adjusted Units': avg_high_adjusted_units
+                    'High-intensity hours': avg_high_hours,
+                    'Adjusted units': avg_adjusted_units,
+                    'High-intensity adjusted units': avg_high_adjusted_units
                 },
-                'Global Estimate': {
-                    'Person-Years': global_years,
-                    'High-Intensity Person-Years': global_high_years,
-                    'Adjusted Units': global_adjusted_units,
-                    'High-Intensity Adjusted Units': global_high_adjusted_units
+                'Global estimate': {
+                    'Person-years': global_years,
+                    'High-intensity person-years': global_high_years,
+                    'Adjusted units': global_adjusted_units,
+                    'High-intensity adjusted units': global_high_adjusted_units
                 }
             }
             table_data.append(row)
             
             # Update total row
-            for category in ['Average Patient', 'Global Estimate']:
+            for category in ['Average patient', 'Global estimate']:
                 for key in total_row[category].keys():
                     total_row[category][key] += row[category][key]
         
@@ -533,10 +533,10 @@ class Visualizer:
         df_data = [
             {
                 'Group': row['Group'],
-                'Hours': format_with_adjusted(row['Average Patient']['Hours'], row['Average Patient']['Adjusted Units']),
-                'High-Intensity Hours': format_with_adjusted(row['Average Patient']['High-Intensity Hours'], row['Average Patient']['High-Intensity Adjusted Units']),
-                'Person-Years': format_with_adjusted(row['Global Estimate']['Person-Years'], row['Global Estimate']['Adjusted Units']),
-                'High-Intensity Person-Years': format_with_adjusted(row['Global Estimate']['High-Intensity Person-Years'], row['Global Estimate']['High-Intensity Adjusted Units'])
+                'Hours': format_with_adjusted(row['Average patient']['Hours'], row['Average patient']['Adjusted units']),
+                'High-intensity hours': format_with_adjusted(row['Average patient']['High-intensity hours'], row['Average patient']['High-intensity adjusted units']),
+                'Person-years': format_with_adjusted(row['Global estimate']['Person-years'], row['Global estimate']['Adjusted units']),
+                'High-intensity person-years': format_with_adjusted(row['Global estimate']['High-intensity person-years'], row['Global estimate']['High-intensity adjusted units'])
             }
             for row in table_data
         ]
@@ -544,10 +544,10 @@ class Visualizer:
         
         df.columns = pd.MultiIndex.from_tuples([
             ('', 'Group'),
-            ('Average Patient', 'Total Hours in Pain'),
-            ('Average Patient', 'Hours in ≥9/10 Pain'),
-            ('Global Estimate', 'Total Person-Years in Pain'),
-            ('Global Estimate', 'Person-Years in ≥9/10 Pain')
+            ('Average patient', 'Total hours in pain'),
+            ('Average patient', 'Hours in ≥9/10 pain'),
+            ('Global estimate', 'Total person-years in pain'),
+            ('Global estimate', 'Person-years in ≥9/10 pain')
         ])
         
         return df
@@ -644,7 +644,7 @@ class Visualizer:
         </style>
         """
         table_html = f"""
-        <div class="table-title">Intensity-Adjusted Person-Years Experienced Annually ({self.simulation.config.transformation_display} Transformation)</div>
+        <div class="table-title">Intensity-adjusted person-years experienced annually ({self.simulation.config.transformation_method} transformation)</div>
         <div class="table-subtitle">Values in brackets represent intensity-adjusted person-years.</div>
         {df.to_html(classes='dataframe', index=False)}
         """
@@ -678,9 +678,9 @@ class Visualizer:
                 ),
                 hovertemplate=
                 '<b>%{text}</b><br><br>' +
-                'Total Attacks: %{x}<br>' +
-                'Total Duration: %{y:.0f} hours<br>' +
-                'Average Intensity: %{z:.1f}<extra></extra>',
+                'Total attacks: %{x}<br>' +
+                'Total duration: %{y:.0f} hours<br>' +
+                'Average intensity: %{z:.1f}<extra></extra>',
                 text=[group] * len(x)
             ))
 
@@ -697,11 +697,11 @@ class Visualizer:
 
         # Update the layout
         fig.update_layout(
-            title='Annual Cluster Headache Attack Data by Patient Group',
+            title='Annual cluster headache attack data by patient group',
             scene=dict(
-                xaxis_title='Total Attacks',
-                yaxis_title='Total Duration (Hours)',
-                zaxis_title='Average Intensity',
+                xaxis_title='Total attacks',
+                yaxis_title='Total duration (hours)',
+                zaxis_title='Average intensity',
                 aspectmode='manual',
                 aspectratio=dict(x=1, y=1, z=0.8),
                 camera=camera,
@@ -755,11 +755,11 @@ class Visualizer:
         ))
         
         fig.update_layout(
-            title="Global Annual Person-Years of Pain: Multiple Sclerosis vs Cluster Headache",
+            title="Global annual person-years of pain: Multiple sclerosis vs cluster headache",
             xaxis_title='Pain Intensity',
             xaxis=dict(tickmode='linear', tick0=0, dtick=1, tickfont=dict(color=self.text_color), title_font=dict(color=self.text_color)),
             yaxis=dict(
-                title='Annual Person-Years',
+                title='Annual person-years',
                 tickfont=dict(color=self.text_color),
                 title_font=dict(color=self.text_color),
                 tickformat=',.0f'
@@ -857,16 +857,16 @@ class Visualizer:
         ))
         
         fig.update_layout(
-            title='CH:MS Burden Ratio by Transformation Intensity Transformation and Pain Threshold',
+            title='CH:MS burden ratio by transformation intensity transformation and pain threshold',
             xaxis=dict(
-                title='Intensity Scale Transformation',
+                title='Intensity scale transformation',
                 ticktext=['More linear', 'More exponential'],
                 tickvals=[n_taylor_values[0], n_taylor_values[-1]],
                 tickfont=dict(color=self.text_color), 
                 title_font=dict(color=self.text_color)
             ),
             yaxis=dict(
-                title='Minimum Pain Intensity Threshold',
+                title='Minimum pain intensity threshold',
                 tickformat='.1f',
                 tickfont=dict(color=self.text_color), 
                 title_font=dict(color=self.text_color)
