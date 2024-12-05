@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import numpy as np
+import toml
 
 @dataclass
 class SimulationConfig:
@@ -23,3 +24,7 @@ class SimulationConfig:
     ms_prevalence_per_100k: int = 37
     ms_fraction_of_year_in_pain: float = .25
     theme: str = 'dark'
+    def __post_init__(self):
+        with open('.streamlit/config.toml', 'r') as f:
+            config = toml.load(f)
+            self.theme = config['theme']['base']
