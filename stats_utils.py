@@ -236,7 +236,7 @@ def generate_max_pain_intensity(is_treated, size, weight_study_1=0.5):
         # Calculate weighted standard deviation
         variance1 = np.average((data1 - mean1)**2, weights=freq1)
         variance2 = np.average((data2 - mean2)**2, weights=freq2)
-        std_severe = np.sqrt(variance1 * weight_study_1 + variance2 * weight_study_2) * INTENSITY_SCALE_FACTOR
+        std_severe = np.sqrt(variance1 * weight_study_1 + variance2 * weight_study_2) * 1
 
         # Truncation bounds
         lower, upper = 0, 10
@@ -247,14 +247,14 @@ def generate_max_pain_intensity(is_treated, size, weight_study_1=0.5):
     
     else:
         # Parameters for treated patients (truncated normal distribution, Snoer data)
-        median_severe = 7.3 * INTENSITY_SCALE_FACTOR
-        q1_severe, q3_severe = 5.9 * INTENSITY_SCALE_FACTOR, 8.7 * INTENSITY_SCALE_FACTOR
+        shift = (7.3 * INTENSITY_SCALE_FACTOR) - 7.3
+        median_severe = 7.3 + shift
+        q1_severe, q3_severe = 5.9 + shift, 8.7 + shift
         mean_severe = median_severe
         std_severe = (q3_severe - q1_severe) / 1.34  # Approximate std from IQR
 
-        lower, upper = 0, 10
-        
         # Generate samples for severe attacks
+        lower, upper = 0, 10
         a_severe, b_severe = (lower - mean_severe) / std_severe, (upper - mean_severe) / std_severe
         severe_samples = truncnorm.rvs(a_severe, b_severe, loc=mean_severe, scale=std_severe, size=size)
 
