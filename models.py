@@ -10,6 +10,7 @@ from stats_utils import (
     optimal_sigma, optimal_mu
 )
 
+
 @dataclass
 class Attack:
     total_duration: int
