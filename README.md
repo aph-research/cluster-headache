@@ -2,6 +2,8 @@
 
 A research tool for modeling and analyzing cluster headache pain patterns across different patient populations, with comparative analysis against multiple sclerosis pain data.
 
+**🚀 [Try the live app](https://ch-burden.streamlit.app/)**
+
 ## Overview
 
 This project simulates cluster headache attacks and pain intensity for various patient cohorts, providing insights into pain burden differences between treated/untreated and episodic/chronic cases. The simulation is based on clinical literature data and includes an interactive Streamlit web application for exploration and analysis.
