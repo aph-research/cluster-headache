@@ -2,8 +2,6 @@ import numpy as np
 from collections import defaultdict
 from models import Patient
 from stats_utils import calculate_adjusted_pain_units, calculate_ms_distribution
-import pandas as pd
-import streamlit as st
 
 class Simulation:
     def __init__(self, config):
@@ -177,65 +175,6 @@ class Simulation:
         self.config.ms_fraction_of_year_in_pain = ms_fraction_of_year_in_pain
         self.calculate_ms_data()
         self.calculate_adjusted_pain_units()
-
-    def export_patient_data_to_csv(self, filename="cluster_headache_patients.csv"):
-        """
-        Export patient simulation data to CSV with specified columns:
-        - ID: unique integer ID (1,2,3...)
-        - type: episodic/chronic
-        - treatment: true/false
-        - total_attacks: integer
-        - total_duration: integer (in minutes)
-        - average_intensity: float
-        - attacks: list of all attacks as (duration,intensity) separated by semicolons
-        """
-        if not self.population:
-            st.warning("No simulation data available to export. Please run the simulation first.")
-            return None
-        
-        patient_data = []
-        
-        for i, patient in enumerate(self.population, 1):
-            # Determine patient type
-            patient_type = "chronic" if patient.is_chronic else "episodic"
-            
-            # Calculate patient statistics
-            total_attacks = patient.calculate_total_attacks()
-            total_duration = patient.calculate_total_duration()  # This is in minutes
-            avg_intensity = patient.calculate_average_intensity()
-            
-            # Format attacks as (duration,intensity) separated by semicolons
-            attacks_list = []
-            for attack in patient.attacks:
-                attack_str = f"({attack.total_duration},{attack.max_intensity:.2f})"
-                attacks_list.append(attack_str)
-            attacks_formatted = ";".join(attacks_list)
-            
-            patient_data.append({
-                'ID': i,
-                'type': patient_type,
-                'treatment': patient.is_treated,
-                'total_attacks': total_attacks,
-                'total_duration': total_duration,
-                'average_intensity': round(avg_intensity, 2) if avg_intensity > 0 else 0,
-                'attacks': attacks_formatted
-            })
-        
-        # Create DataFrame and save to CSV
-        df = pd.DataFrame(patient_data)
-        csv_data = df.to_csv(index=False)
-        
-        # Provide download button in Streamlit
-        st.download_button(
-            label="Download Patient Data CSV",
-            data=csv_data,
-            file_name=filename,
-            mime="text/csv",
-            help="Download CSV file containing individual patient simulation data"
-        )
-        
-        st.success(f"Patient data ready for download! Contains {len(patient_data)} patients.")
-        return csv_data
 
     def get_results(self):
         return {

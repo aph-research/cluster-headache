@@ -131,11 +131,6 @@ def main():
         visualizer = Visualizer(simulation)
         fig_exports_all = {}
     
-        # CSV Export Section
-        st.header("Export Patient Data")
-        st.write("Download individual patient simulation data as CSV file:")
-        simulation.export_patient_data_to_csv()
-        
         # Visualization sections
         fig_avg = visualizer.create_average_hours_plot()
         st.plotly_chart(fig_avg)
