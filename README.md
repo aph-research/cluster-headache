@@ -2,7 +2,7 @@
 
 A research tool for modeling and analyzing cluster headache pain patterns across different patient populations, with comparative analysis against multiple sclerosis pain data.
 
-**🚀 [Try the live app](https://ch-burden.streamlit.app/)**
+**🚀 [Try the live app here](https://ch-burden.streamlit.app/)**
 
 ## Overview
 
