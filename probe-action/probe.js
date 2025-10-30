@@ -1,8 +1,8 @@
 const puppeteer = require("puppeteer");
 const TARGET_URL = "https://ch-burden.streamlit.app/";
 const WAKE_UP_BUTTON_TEXT = "app back up";
-const PAGE_LOAD_GRACE_PERIOD_MS = 10000;
-const TIMEOUT_MS = 30000;
+const PAGE_LOAD_GRACE_PERIOD_MS = 15000;
+const TIMEOUT_MS = 60000;
 
 console.log(process.version);
 
@@ -16,12 +16,12 @@ console.log(process.version);
   const page = await browser.newPage();
   console.log(page); // Print the page object to inspect its properties
 
-  await page.goto(TARGET_URL);
+  await page.goto(TARGET_URL, { waitUntil: 'networkidle2' });
 
   console.log(page); // Print the page object to inspect its properties
 
   // Wait a grace period for the application to load
-  await page.waitForTimeout(PAGE_LOAD_GRACE_PERIOD_MS);
+  await new Promise(resolve => setTimeout(resolve, PAGE_LOAD_GRACE_PERIOD_MS));
 
   const checkForHibernation = async (target) => {
     // Look for any buttons containing the target text of the reboot button
@@ -58,10 +58,12 @@ console.log(process.version);
 
     if (Date.now() - startTime > TIMEOUT_MS) {
       console.error("Error: Timeout exceeded. No frame contains 'Cluster'.");
+      console.error(`Checked for ${Math.floor((Date.now() - startTime) / 1000)} seconds`);
+      console.error(`Number of frames: ${frames.length}`);
       process.exit(1);
     }
 
-    await page.waitForTimeout(1000); // Wait 1 second before checking again
+    await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second before checking again
   }
 
   await browser.close();
